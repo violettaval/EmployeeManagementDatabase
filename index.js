@@ -1,26 +1,23 @@
-const inquirer = require("inquirer");
+const { prompt } = require("inquirer");
 const mysql = require("mysql");
 const util = require("util");
 require("console.table");
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "",
-    database: "employees"
+    password: "artist37",
+    database: "role_management_db"
 });
-
+connection.query = util.promisify(connection.query);
 connection.connect(function(err) {
     if (err) throw err; 
-    console.log("Welcome");
-    run();
 });
-
-connection.query = util.promisify(connection.query);
-function run() {
-    inquirer
-        .prompt({
-            name: "action",
-            type: "rawlist",
+run();
+async function run() {
+    const { choice } = await prompt([
+        {
+            type: "list", 
+            name: "choice",
             message: "What would you like to do?",
             choices: [
                 "Add departments",
@@ -32,41 +29,42 @@ function run() {
                 "Update employee roles",
                 "Quit"
             ]
-        })
-        .then(function (answer) {
-            switch (answer.action) {
-                case "Add departments":
-                    addDepartment();
-                    break;
+        }
+    ]);
 
-                case "Add roles":
-                    addRole();
-                    break;
+    // Call the appropriate function depending on what the user chose
+    switch (choice) {
+        case "Add departments":
+            addDepartment();
+            break;
 
-                case "Add employees":
-                    addEmployee();
-                    break;
+        case "Add roles":
+            addRole();
+            break;
 
-                case "View departments":
-                    displayDepartment();
-                    break;
+        case "Add employees":
+            addEmployee();
+            break;
 
-                case "View roles":
-                    displayRole();
-                    break;
+        case "View departments":
+            displayDepartment();
+            break;
 
-                case "View employees":
-                    displayEmployee();
-                    break;
+        case "View roles":
+            displayRole();
+            break;
 
-                case "Update employee roles":
-                    changeEmployee();
-                    break;
-                default:
-                console.log("Goodbye!")
-            }
-        });
-};
+        case "View employees":
+            displayEmployee();
+            break;
+
+        case "Update employee roles":
+            changeEmployee();
+            break;
+        default:
+            console.log("Goodbye!")
+    }
+}
 
 // Create a new department
 async function addDepartment() {
@@ -160,7 +158,7 @@ async function displayDepartment() {
 };
 
 // Find all roles, join with departments to display the department name
-async function displayRoles() {
+async function displayRole() {
     const roles = await connection.query("SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id;");
     console.log("\n");
     console.table(roles);

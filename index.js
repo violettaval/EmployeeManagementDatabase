@@ -12,12 +12,14 @@ connection.query = util.promisify(connection.query);
 connection.connect(function(err) {
     if (err) throw err; 
 });
+console.log("Welcome");
 run();
 async function run() {
-    const { choice } = await prompt([
+    console.log("Main Menu");
+    const { action } = await prompt([
         {
             type: "list", 
-            name: "choice",
+            name: "action",
             message: "What would you like to do?",
             choices: [
                 "Add departments",
@@ -33,7 +35,7 @@ async function run() {
     ]);
 
     // Call the appropriate function depending on what the user chose
-    switch (choice) {
+    switch (action) {
         case "Add departments":
             addDepartment();
             break;
@@ -75,7 +77,7 @@ async function addDepartment() {
       }
     ]);
     await connection.query("INSERT INTO department SET ?", department);
-    console.log(`Added ${department.name} to the database`);
+    console.log(department.name + "has been added to the database");
     run();
 };
 
@@ -103,7 +105,7 @@ async function addRole() {
       }
     ]);
     await connection.query("INSERT INTO role SET ?", role);
-    console.log(`Added ${role.title} to the database`); 
+    console.log(role.title + "has been added to the database"); 
     run();
 };
 
@@ -145,7 +147,8 @@ async function addEmployee() {
     });
     employee.manager_id = managerId;
     await connection.query("INSERT INTO employee SET ?", employee);
-    console.log(`Added ${employee.first_name} ${employee.last_name} to the database`);
+    console.log(employee.first_name + " " + employee.last_name + "
+    has been added to the database");
     run();
 };
 
@@ -205,6 +208,6 @@ async function changeEmployee() {
         "UPDATE employee SET role_id = ? WHERE id = ?",
         [roleId, employeeId]
     );
-    console.log("Updated employee's role");
+    console.log("Employee's role has been updated");
     run();
 };

@@ -5,7 +5,7 @@ require("console.table");
 const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "artist37",
+    password: "",
     database: "role_management_db"
 });
 connection.query = util.promisify(connection.query);
